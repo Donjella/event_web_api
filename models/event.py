@@ -13,13 +13,15 @@ class Event(db.Model):
 
     organiser = db.relationship("Organiser", back_populates="events")
     venue = db.relationship("Venue", back_populates="events")
+    event_participants = db.relationship("EventParticipant", back_populates="event", cascade="all, delete")
 
 class EventSchema(ma.Schema):
     organiser = fields.Nested("OrganiserSchema", exclude=["events"])
     venue = fields.Nested("VenueSchema", exclude=["events"])
+    event_participants = fields.List(fields.Nested("EventParticipantSchema", exclude=["event"]))
 
     class Meta:
-        fields = ("event_id", "organiser_id", "venue_id", "name", "description", "date", "time", "organiser", "venue")
+        fields = ("event_id", "organiser_id", "venue_id", "name", "description", "date", "time", "organiser", "venue", "event_participants")
 
 event_schema = EventSchema()
 events_schema = EventSchema(many=True)

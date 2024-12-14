@@ -1,5 +1,4 @@
 from marshmallow import fields
-
 from init import db, ma
 
 class Organiser(db.Model):
@@ -11,7 +10,6 @@ class Organiser(db.Model):
     company_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(20))
-    events = db.relationship("Event", back_populates="organiser", cascade="all, delete")
 
 class OrganiserSchema(ma.Schema):
     events = fields.List(fields.Nested("EventSchema"), exclude=["organiser"])
@@ -21,3 +19,6 @@ class OrganiserSchema(ma.Schema):
 
 organiser_schema = OrganiserSchema()
 organisers_schema = OrganiserSchema(many=True)
+
+
+

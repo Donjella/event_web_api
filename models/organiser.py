@@ -11,7 +11,6 @@ class Organiser(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(20))
 
-    # Use a string reference to the Event class
     events = db.relationship("Event", back_populates="organiser", cascade="all, delete")
 
 class OrganiserSchema(ma.Schema):

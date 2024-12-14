@@ -11,14 +11,15 @@ class Event(db.Model):
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.Time, nullable=False)
 
-    # Establish back_populates to Organiser
     organiser = db.relationship("Organiser", back_populates="events")
+    venue = db.relationship("Venue", back_populates="events")
 
 class EventSchema(ma.Schema):
     organiser = fields.Nested("OrganiserSchema", exclude=["events"])
+    venue = fields.Nested("VenueSchema", exclude=["events"])
 
     class Meta:
-        fields = ("event_id", "organiser_id", "venue_id", "name", "description", "date", "time", "organiser")
+        fields = ("event_id", "organiser_id", "venue_id", "name", "description", "date", "time", "organiser", "venue")
 
 event_schema = EventSchema()
 events_schema = EventSchema(many=True)

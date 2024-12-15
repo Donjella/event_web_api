@@ -2,7 +2,7 @@ from init import db, ma
 from marshmallow import fields
 
 class Participant(db.Model):
-    __tablename__ = 'participants'
+    __tablename__ = "participants"
 
     participant_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)

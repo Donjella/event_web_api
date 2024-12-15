@@ -2,7 +2,8 @@ from init import db, ma
 from marshmallow import fields
 
 class Venue(db.Model):
-    __tablename__ = 'venues'
+    __tablename__ = "venues"
+    
     venue_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     street_address = db.Column(db.String(255), nullable=False)
@@ -14,7 +15,6 @@ class Venue(db.Model):
     events = db.relationship("Event", back_populates="venue", cascade="all, delete")
 
 class VenueSchema(ma.Schema):
-   
     events = fields.List(fields.Nested("EventSchema", exclude=["venue"]))
 
     class Meta:

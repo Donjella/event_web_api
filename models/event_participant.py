@@ -2,7 +2,7 @@ from init import db, ma
 from marshmallow import fields
 
 class EventParticipant(db.Model):
-    __tablename__ = "event_participant"
+    __tablename__ = "event_participants"
 
     event_participant_id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("events.event_id", ondelete="CASCADE"), nullable=False)
@@ -13,7 +13,6 @@ class EventParticipant(db.Model):
     participant = db.relationship("Participant", back_populates="event_participants")
 
 class EventParticipantSchema(ma.Schema):
-    
     event = fields.Nested("EventSchema", exclude=["event_participants"])
     participant = fields.Nested("ParticipantSchema", exclude=["event_participants"])
 

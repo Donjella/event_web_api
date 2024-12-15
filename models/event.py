@@ -14,7 +14,7 @@ class Event(db.Model):
 
     organiser = db.relationship("Organiser", back_populates="events", passive_deletes=True)
     venue = db.relationship("Venue", back_populates="events", passive_deletes=True)
-    event_participants = db.relationship("EventParticipant", back_populates="event", cascade="all, delete-orphan")
+    event_participants = db.relationship("EventParticipant", back_populates="event", cascade="all, delete-orphan", passive_deletes=True)
 
 class EventSchema(ma.Schema):
     organiser = fields.Nested("OrganiserSchema", exclude=["events"])

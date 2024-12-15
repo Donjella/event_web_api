@@ -9,8 +9,8 @@ class EventParticipant(db.Model):
     participant_id = db.Column(db.Integer, db.ForeignKey("participants.participant_id", ondelete="CASCADE"), nullable=False)
     registration_date = db.Column(db.Date, nullable=False)
 
-    event = db.relationship("Event", back_populates="event_participants")
-    participant = db.relationship("Participant", back_populates="event_participants")
+    event = db.relationship("Event", back_populates="event_participants", passive_deletes=True)
+    participant = db.relationship("Participant", back_populates="event_participants", passive_deletes=True)
 
 class EventParticipantSchema(ma.Schema):
     event = fields.Nested("EventSchema", exclude=["event_participants"])

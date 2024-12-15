@@ -11,7 +11,7 @@ class Organiser(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(20))
 
-    events = db.relationship("Event", back_populates="organiser", cascade="all, delete")
+    events = db.relationship("Event", back_populates="organiser", cascade="all, delete-orphan", passive_deletes=True)
 
 class OrganiserSchema(ma.Schema):
     events = fields.List(fields.Nested("EventSchema"), exclude=["organiser"])

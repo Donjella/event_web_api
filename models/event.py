@@ -3,7 +3,7 @@ from marshmallow import fields
 
 class Event(db.Model):
     __tablename__ = "events"
-    
+
     event_id = db.Column(db.Integer, primary_key=True)
     organiser_id = db.Column(db.Integer, db.ForeignKey("organisers.organiser_id", ondelete="CASCADE"), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey("venues.venue_id", ondelete="CASCADE"), nullable=False)
@@ -12,9 +12,9 @@ class Event(db.Model):
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.Time, nullable=False)
 
-    organiser = db.relationship("Organiser", back_populates="events")
-    venue = db.relationship("Venue", back_populates="events")
-    event_participants = db.relationship("EventParticipant", back_populates="event", cascade="all, delete")
+    organiser = db.relationship("Organiser", back_populates="events", passive_deletes=True)
+    venue = db.relationship("Venue", back_populates="events", passive_deletes=True)
+    event_participants = db.relationship("EventParticipant", back_populates="event", cascade="all, delete-orphan")
 
 class EventSchema(ma.Schema):
     organiser = fields.Nested("OrganiserSchema", exclude=["events"])

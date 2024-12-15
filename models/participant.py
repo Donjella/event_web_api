@@ -10,7 +10,7 @@ class Participant(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(20), nullable=False)
 
-    event_participants = db.relationship("EventParticipant", back_populates="participant", cascade="all, delete")
+    event_participants = db.relationship("EventParticipant", back_populates="participant", cascade="all, delete-orphan")
 
 class ParticipantSchema(ma.Schema):
     event_participants = fields.List(fields.Nested("EventParticipantSchema", exclude=["participant"]))

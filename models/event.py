@@ -3,6 +3,7 @@ from marshmallow import fields
 
 class Event(db.Model):
     __tablename__ = 'events'
+    
     event_id = db.Column(db.Integer, primary_key=True)
     organiser_id = db.Column(db.Integer, db.ForeignKey('organisers.organiser_id', ondelete='CASCADE'), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey('venues.venue_id', ondelete='CASCADE'), nullable=False)

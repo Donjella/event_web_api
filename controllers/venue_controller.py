@@ -1,21 +1,22 @@
 from flask import Blueprint, request
 from sqlalchemy.exc import IntegrityError
-from psycopg2 import errorcodes
+from marshmallow.exceptions import ValidationError
 
 from init import db
 from models.venue import Venue, venues_schema, venue_schema
+from utils.error_handlers import format_validation_error, format_integrity_error
 
 venues_bp = Blueprint("venues", __name__, url_prefix="/venues")
 
 # Read all - /venues - GET
-@venues_bp.route("/")
+@venues_bp.route("/", methods=["GET"])
 def get_venues():
     stmt = db.select(Venue).order_by(Venue.name)
     venues_list = db.session.scalars(stmt)
     return venues_schema.dump(venues_list)
 
 # Read one - /venues/<venue_id> - GET
-@venues_bp.route("/<int:venue_id>")
+@venues_bp.route("/<int:venue_id>", methods=["GET"])
 def get_venue(venue_id):
     stmt = db.select(Venue).filter_by(venue_id=venue_id)
     venue = db.session.scalar(stmt)
@@ -27,6 +28,9 @@ def get_venue(venue_id):
 # Create - /venues - POST
 @venues_bp.route("/", methods=["POST"])
 def create_venue():
+    if not request.json:
+        return {"message": "Request body must be JSON"}, 400
+
     try:
         body_data = venue_schema.load(request.get_json())
         new_venue = Venue(
@@ -40,29 +44,42 @@ def create_venue():
         db.session.add(new_venue)
         db.session.commit()
         return venue_schema.dump(new_venue), 201
+
+    except ValidationError as err:
+        return format_validation_error(err)
+
     except IntegrityError as err:
-        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
-            return {"message": f"The field '{err.orig.diag.column_name}' is required"}, 400
-        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
-            return {"message": "Venue name must be unique"}, 400
-        
+        return format_integrity_error(err)
+
+
 # Update - /venues/<venue_id> - PUT/PATCH
 @venues_bp.route("/<int:venue_id>", methods=["PUT", "PATCH"])
 def update_venue(venue_id):
+    if not request.json:
+        return {"message": "Request body must be JSON"}, 400
+
     stmt = db.select(Venue).filter_by(venue_id=venue_id)
     venue = db.session.scalar(stmt)
     if venue:
-        body_data = venue_schema.load(request.get_json(), partial=True)
-        venue.name = body_data.get("name") or venue.name
-        venue.street_address = body_data.get("street_address") or venue.street_address
-        venue.city = body_data.get("city") or venue.city
-        venue.state = body_data.get("state") or venue.state
-        venue.postcode = body_data.get("postcode") or venue.postcode
-        venue.capacity = body_data.get("capacity") or venue.capacity
-        db.session.commit()
-        return venue_schema.dump(venue)
+        try:
+            body_data = venue_schema.load(request.get_json(), partial=True)
+            venue.name = body_data.get("name") or venue.name
+            venue.street_address = body_data.get("street_address") or venue.street_address
+            venue.city = body_data.get("city") or venue.city
+            venue.state = body_data.get("state") or venue.state
+            venue.postcode = body_data.get("postcode") or venue.postcode
+            venue.capacity = body_data.get("capacity") or venue.capacity
+            db.session.commit()
+            return venue_schema.dump(venue), 200
+
+        except ValidationError as err:
+            return format_validation_error(err)
+
+        except IntegrityError as err:
+            return format_integrity_error(err)
     else:
         return {"message": f"Venue with id {venue_id} not found"}, 404
+
 
 # Delete - /venues/<venue_id> - DELETE
 @venues_bp.route("/<int:venue_id>", methods=["DELETE"])
@@ -72,7 +89,6 @@ def delete_venue(venue_id):
     if venue:
         db.session.delete(venue)
         db.session.commit()
-        return {"message": f"Venue '{venue.name}' deleted successfully"}
+        return {"message": f"Venue '{venue.name}' deleted successfully"}, 200
     else:
         return {"message": f"Venue with id {venue_id} not found"}, 404
-    

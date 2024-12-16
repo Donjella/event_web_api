@@ -41,18 +41,7 @@ class EventSchema(ma.Schema):
     event_participants = fields.List(fields.Nested("EventParticipantSchema", exclude=["event"]))
 
     class Meta:
-        fields = (
-            "event_id", 
-            "organiser_id", 
-            "venue_id", 
-            "name", 
-            "description", 
-            "date", 
-            "time", 
-            "organiser", 
-            "venue", 
-            "event_participants"
-        )
+        fields = ("event_id", "organiser_id", "venue_id", "name", "description", "date", "time", "organiser", "venue", "event_participants")
 
 event_schema = EventSchema()
 events_schema = EventSchema(many=True)

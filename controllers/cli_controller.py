@@ -2,6 +2,7 @@ from flask import Blueprint
 from init import db
 from models.organiser import Organiser
 from models.venue import Venue
+from models.event import Event  # Import Event model
 
 db_commands = Blueprint("db", __name__)
 
@@ -40,7 +41,6 @@ def seed_tables():
             phone="0401223456"
         )
     ]
-
     db.session.add_all(organisers)
 
     venues = [
@@ -54,7 +54,7 @@ def seed_tables():
         ),
         Venue(
             name="Melbourne Convention Centre",
-            street_address="1 Convention Centre PL",
+            street_address="1 Convention Centre Pl",
             city="Melbourne",
             state="VIC",
             postcode="3000",
@@ -70,7 +70,34 @@ def seed_tables():
         )
     ]
     db.session.add_all(venues)
-    
+
+    events = [
+        Event(
+            name="Tech Conference 2024",
+            description="A conference for tech enthusiasts.",
+            date="2024-12-01",
+            time="09:00:00",
+            organiser_id=1,  # Assuming Alice's organiser_id is 1
+            venue_id=1       # Assuming Hilton Sydney's venue_id is 1
+        ),
+        Event(
+            name="AI Summit 2024",
+            description="Exploring the latest in AI advancements.",
+            date="2025-01-15",
+            time="10:00:00",
+            organiser_id=2,  # Assuming Graham's organiser_id is 2
+            venue_id=2       # Assuming Melbourne Convention Centre's venue_id is 2
+        ),
+        Event(
+            name="Developer Conference 2024",
+            description="An event for software developers to network.",
+            date="2024-11-20",
+            time="14:00:00",
+            organiser_id=3,  # Assuming Charlie's organiser_id is 3
+            venue_id=3       # Assuming Brisbane Airport Conference Centre's venue_id is 3
+        )
+    ]
+    db.session.add_all(events)
+
     db.session.commit()
-    print("Tables seeded")
-  
+    print("All tables seeded")

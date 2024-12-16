@@ -83,3 +83,15 @@ def update_event(event_id):
             return format_integrity_error(err)
     else:
         return {"message": f"Event with id {event_id} not found"}, 404
+
+# Delete - /events/<event_id> - DELETE
+@events_bp.route("/<int:event_id>", methods=["DELETE"])
+def delete_event(event_id):
+    stmt = db.select(Event).filter_by(event_id=event_id)
+    event = db.session.scalar(stmt)
+    if event:
+        db.session.delete(event)
+        db.session.commit()
+        return {"message": f"Event '{event.name}' deleted successfully"}, 200
+    else:
+        return {"message": f"Event with id {event_id} not found"}, 404

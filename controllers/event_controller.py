@@ -9,6 +9,32 @@ from utils.error_handlers import format_validation_error, format_integrity_error
 
 events_bp = Blueprint("events", __name__, url_prefix="/events")
 
+# Create - /events - POST
+@events_bp.route("/", methods=["POST"])
+def create_event():
+    if not request.json:
+        return {"message": "Request body must be JSON"}, 400
+
+    try:
+        body_data = event_schema.load(request.get_json())
+        new_event = Event(
+            name=body_data.get("name"),
+            description=body_data.get("description"),
+            date=body_data.get("date"),
+            time=body_data.get("time"),
+            organiser_id=body_data.get("organiser_id"),
+            venue_id=body_data.get("venue_id")
+        )
+        db.session.add(new_event)
+        db.session.commit()
+        return event_schema.dump(new_event), 201
+
+    except ValidationError as err:
+        return format_validation_error(err)
+
+    except IntegrityError as err:
+        return format_integrity_error(err)
+
 # Read all - /events - GET
 @events_bp.route("/", methods=["GET"])
 def get_events():

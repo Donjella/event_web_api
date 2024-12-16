@@ -35,3 +35,15 @@ def create_venue():
             return {"message": f"The field '{err.orig.diag.column_name}' is required"}, 400
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
             return {"message": "Venue name must be unique"}, 400
+
+# Delete - /venues/<venue_id> - DELETE
+@venues_bp.route("/<int:venue_id>", methods=["DELETE"])
+def delete_venue(venue_id):
+    stmt = db.select(Venue).filter_by(venue_id=venue_id)
+    venue = db.session.scalar(stmt)
+    if venue:
+        db.session.delete(venue)
+        db.session.commit()
+        return {"message": f"Venue '{venue.name}' deleted successfully"}
+    else:
+        return {"message": f"Venue with id {venue_id} not found"}, 404

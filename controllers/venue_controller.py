@@ -14,6 +14,16 @@ def get_venues():
     venues_list = db.session.scalars(stmt)
     return venues_schema.dump(venues_list)
 
+# Read one - /venues/<venue_id> - GET
+@venues_bp.route("/<int:venue_id>")
+def get_venue(venue_id):
+    stmt = db.select(Venue).filter_by(venue_id=venue_id)
+    venue = db.session.scalar(stmt)
+    if venue:
+        return venue_schema.dump(venue)
+    else:
+        return {"message": f"Venue with id {venue_id} not found"}, 404
+
 # Create - /venues - POST
 @venues_bp.route("/", methods=["POST"])
 def create_venue():

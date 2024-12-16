@@ -28,8 +28,8 @@ def get_venue(venue_id):
 # Create - /venues - POST
 @venues_bp.route("/", methods=["POST"])
 def create_venue():
-    if not request.json:
-        return {"message": "Request body must be JSON"}, 400
+    if not request.data or request.data.strip() == b"":  
+        return {"message": "Request body must be JSON and cannot be empty."}, 400
 
     try:
         body_data = venue_schema.load(request.get_json())
@@ -50,7 +50,6 @@ def create_venue():
 
     except IntegrityError as err:
         return format_integrity_error(err)
-
 
 # Update - /venues/<venue_id> - PUT/PATCH
 @venues_bp.route("/<int:venue_id>", methods=["PUT", "PATCH"])

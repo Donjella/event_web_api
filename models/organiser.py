@@ -11,12 +11,7 @@ class Organiser(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(20), nullable=False)
 
-    events = db.relationship(
-        "Event", 
-        back_populates="organiser", 
-        cascade="all, delete-orphan", 
-        passive_deletes=True
-    )
+    events = db.relationship("Event", back_populates="organiser", cascade="all, delete-orphan", passive_deletes=True)
 
 # Australian phone number regex
 AU_PHONE_REGEX = r"^\+61[2-9]\d{8}$|^0[2-9]\d{8}$"

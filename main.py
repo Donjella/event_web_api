@@ -6,6 +6,7 @@ from init import db, ma
 from controllers.cli_controller import db_commands
 from controllers.venue_controller import venues_bp
 from controllers.organiser_controller import organisers_bp
+from controllers.event_controller import events_bp
 
 # Application factory - idea is to set up the application in a function.
 def create_app():
@@ -19,5 +20,6 @@ def create_app():
     app.register_blueprint(db_commands)
     app.register_blueprint(venues_bp)
     app.register_blueprint(organisers_bp)
+    app.register_blueprint(events_bp)
 
     return app

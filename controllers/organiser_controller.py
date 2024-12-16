@@ -23,3 +23,24 @@ def get_organiser(organiser_id):
         return organiser_schema.dump(organiser)
     else:
         return {"message": f"Organiser with id {organiser_id} does not exist"}, 404
+
+# Create a new organiser - /organisers - POST
+@organisers_bp.route("/", methods=["POST"])
+def create_organiser():
+    try:
+        body_data = organiser_schema.load(request.get_json())
+        new_organiser = Organiser(
+            first_name=body_data.get("first_name"),
+            last_name=body_data.get("last_name"),
+            company_name=body_data.get("company_name"),
+            email=body_data.get("email"),
+            phone=body_data.get("phone")
+        )
+        db.session.add(new_organiser)
+        db.session.commit()
+        return organiser_schema.dump(new_organiser), 201
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": f"Email '{body_data.get('email')}' is already in use"}, 409
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message": f"The field '{err.orig.diag.column_name}' is required"}, 409

@@ -54,8 +54,8 @@ def create_venue():
 # Update - /venues/<venue_id> - PUT/PATCH
 @venues_bp.route("/<int:venue_id>", methods=["PUT", "PATCH"])
 def update_venue(venue_id):
-    if not request.json:
-        return {"message": "Request body must be JSON"}, 400
+    if not request.data or request.data.strip() == b"":  
+        return {"message": "Request body must be JSON and cannot be empty."}, 400
 
     stmt = db.select(Venue).filter_by(venue_id=venue_id)
     venue = db.session.scalar(stmt)
@@ -78,7 +78,6 @@ def update_venue(venue_id):
             return format_integrity_error(err)
     else:
         return {"message": f"Venue with id {venue_id} not found"}, 404
-
 
 # Delete - /venues/<venue_id> - DELETE
 @venues_bp.route("/<int:venue_id>", methods=["DELETE"])

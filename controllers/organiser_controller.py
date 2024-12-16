@@ -28,8 +28,8 @@ def get_organiser(organiser_id):
 # Create - /organisers - POST
 @organisers_bp.route("/", methods=["POST"])
 def create_organiser():
-    if not request.json:
-        return {"message": "Request body must be JSON"}, 400
+    if not request.data or request.data.strip() == b"":  
+        return {"message": "Request body must be JSON and cannot be empty."}, 400
 
     try:
         body_data = organiser_schema.load(request.get_json())
@@ -53,8 +53,8 @@ def create_organiser():
 # Update - /organisers/<organiser_id> - PUT/PATCH
 @organisers_bp.route("/<int:organiser_id>", methods=["PUT", "PATCH"])
 def update_organiser(organiser_id):
-    if not request.json:
-        return {"message": "Request body must be JSON"}, 400
+    if not request.data or request.data.strip() == b"":  
+        return {"message": "Request body must be JSON and cannot be empty."}, 400
 
     stmt = db.select(Organiser).filter_by(organiser_id=organiser_id)
     organiser = db.session.scalar(stmt)
@@ -74,7 +74,6 @@ def update_organiser(organiser_id):
 
         except IntegrityError as err:
             return format_integrity_error(err)
-
     else:
         return {"message": f"Organiser with id {organiser_id} not found"}, 404
 

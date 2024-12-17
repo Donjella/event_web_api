@@ -6,18 +6,13 @@ class Venue(db.Model):
 
     venue_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    capacity = db.Column(db.Integer, nullable=False)  
     street_address = db.Column(db.String(255), nullable=False)
     city = db.Column(db.String(100), nullable=False)
     state = db.Column(db.String(100), nullable=False)
     postcode = db.Column(db.String(4), nullable=False)
-    capacity = db.Column(db.Integer, nullable=False)  
-
-    events = db.relationship(
-        "Event", 
-        back_populates="venue", 
-        cascade="all, delete-orphan", 
-        passive_deletes=True
-    )
+  
+    events = db.relationship("Event", back_populates="venue", cascade="all, delete-orphan", passive_deletes=True)
 
 VALID_STATES_REGEX = r"(?i)^(WA|Western Australia|QLD|Queensland|VIC|Victoria|NSW|New South Wales|TAS|Tasmania|SA|South Australia)$"
 

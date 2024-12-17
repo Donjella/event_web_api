@@ -2,9 +2,36 @@
 
 The Event Management Web API is a Flask-based RESTful API designed to manage events, venues, organisers, participants, and their relationships efficiently. This project forms part of a coursework assessment and adheres to industry best practices, including error handling, validation, and modular design.
 
-## ERD
+## ERD and relationships
 
 ![ERD Diagram for Event Management Web API](images/ERD.png)
+
+### Relationships:
+
+**Organiser to Event:**
+
+- One Organiser can organize zero or many Events.
+- Each Event must be organized by one and only one Organiser.
+- **Notation**: **Organiser**  `(||)` - `(0..*)` **Event**
+
+**Event to Event Participant:**
+
+- One Event can have zero or many Event Participants.
+- Each Event Participant must be associated with one and only one Event to track participants for individual events. Each Event Participant record is designed to link one participant to one event.
+- **Notation**: **Event** `(||)` — `(0..*)` **Event Participant**
+
+**Participant to Event Participant:**
+
+- One Participant can be in zero or many Event Participants (to track individual, unique participant in each unique event).
+- Each Event Participant must be associated with one and only one Participant.
+- **Notation**: **Participant** `(||)` — `(0..*)` **Event Participant**
+
+**Event to Venue:**
+
+- One Event must be associated with one and only one Venue.
+- One Venue can host zero or many Events.
+- **Notation**: **Venue** `(||)` — `(0..*)` **Event**
+
 ## Application Setup
 
 ***Note***: The application is developed and tested on Python 3.12.5 and is confirmed to work on Unix-like systems (specifically macOS). Compatibility on other operating systems is not guaranteed. Below are the instructions for setting up the environment on macOS; please adjust as needed for your system.

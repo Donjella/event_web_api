@@ -8,25 +8,25 @@ The Event Management Web API is a Flask-based RESTful API designed to manage eve
 
 ### Relationships:
 
-**Organiser to Event:**
+**Organisers to Events:**
 
 - One Organiser can organize zero or many Events.
 - Each Event must be organized by one and only one Organiser.
 - **Notation**: **Organiser**  `(||)` - `(0..*)` **Event**
 
-**Event to Event Participant:**
+**Events to Event Participants:**
 
 - One Event can have zero or many Event Participants.
 - Each Event Participant must be associated with one and only one Event to track participants for individual events. Each Event Participant record is designed to link one participant to one event.
 - **Notation**: **Event** `(||)` — `(0..*)` **Event Participant**
 
-**Participant to Event Participant:**
+**Participants to Event Participants:**
 
 - One Participant can be in zero or many Event Participants (to track individual, unique participant in each unique event).
 - Each Event Participant must be associated with one and only one Participant.
 - **Notation**: **Participant** `(||)` — `(0..*)` **Event Participant**
 
-**Event to Venue:**
+**Events to Venues:**
 
 - One Event must be associated with one and only one Venue.
 - One Venue can host zero or many Events.

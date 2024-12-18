@@ -4,6 +4,7 @@ from models.organiser import Organiser
 from models.venue import Venue
 from models.event import Event  
 from models.participant import Participant  
+from models.event_participant import EventParticipant
 
 db_commands = Blueprint("db", __name__)
 
@@ -133,6 +134,25 @@ def seed_tables():
         )
     ]
     db.session.add_all(participants)
+
+    event_participants = [
+        EventParticipant(
+            event_id=1,  
+            participant_id=1,  
+            registration_date="2024-11-15"
+        ),
+        EventParticipant(
+            event_id=2,
+            participant_id=2,
+            registration_date="2024-12-01"
+        ),
+        EventParticipant(
+            event_id=1,
+            participant_id=3,
+            registration_date="2024-11-18"
+        )
+    ]
+    db.session.add_all(event_participants)
 
     db.session.commit()
     print("All tables seeded")

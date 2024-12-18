@@ -24,4 +24,17 @@ def create_app():
     app.register_blueprint(events_bp)
     app.register_blueprint(participants_bp)
 
+    # Global Error Handlers
+    @app.errorhandler(400)
+    def bad_request(err):
+        return {"message": "Bad Request", "details": str(err)}, 400
+
+    @app.errorhandler(404)
+    def not_found(err):
+        return {"message": "Not Found", "details": str(err)}, 404
+
+    @app.errorhandler(500)
+    def internal_server_error(err):
+        return {"message": "Internal Server Error", "details": str(err)}, 500
+
     return app

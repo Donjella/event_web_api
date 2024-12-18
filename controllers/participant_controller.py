@@ -4,7 +4,7 @@ from marshmallow.exceptions import ValidationError
 
 from init import db
 from models.participant import Participant, participants_schema, participant_schema
-from utils.error_handlers import format_validation_error, format_integrity_error
+from utils.error_handlers import format_validation_error, handle_unique_violation
 
 participants_bp = Blueprint("participants", __name__, url_prefix="/participants")
 

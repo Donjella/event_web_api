@@ -4,7 +4,7 @@ from marshmallow.exceptions import ValidationError
 
 from init import db
 from models.venue import Venue, venues_schema, venue_schema
-from utils.error_handlers import format_validation_error, format_integrity_error
+from utils.error_handlers import format_validation_error, handle_unique_violation
 
 venues_bp = Blueprint("venues", __name__, url_prefix="/venues")
 
@@ -28,7 +28,7 @@ def get_venue(venue_id):
 # Create - /venues - POST
 @venues_bp.route("/", methods=["POST"])
 def create_venue():
-    if not request.data or request.data.strip() == b"":  
+    if not request.data or request.data.strip() == b"":
         return {"message": "Request body must be JSON and cannot be empty."}, 400
 
     try:
@@ -49,12 +49,12 @@ def create_venue():
         return format_validation_error(err)
 
     except IntegrityError as err:
-        return format_integrity_error(err)
+        return handle_unique_violation(err, body_data, ["name"])
 
 # Update - /venues/<venue_id> - PUT/PATCH
 @venues_bp.route("/<int:venue_id>", methods=["PUT", "PATCH"])
 def update_venue(venue_id):
-    if not request.data or request.data.strip() == b"":  
+    if not request.data or request.data.strip() == b"":
         return {"message": "Request body must be JSON and cannot be empty."}, 400
 
     stmt = db.select(Venue).filter_by(venue_id=venue_id)
@@ -75,7 +75,7 @@ def update_venue(venue_id):
             return format_validation_error(err)
 
         except IntegrityError as err:
-            return format_integrity_error(err)
+            return handle_unique_violation(err, body_data, ["name"])
     else:
         return {"message": f"Venue with id {venue_id} not found"}, 404
 

@@ -12,7 +12,7 @@ events_bp = Blueprint("events", __name__, url_prefix="/events")
 # Create - /events - POST
 @events_bp.route("/", methods=["POST"])
 def create_event():
-    if not request.data or request.data.strip() == b"":  # Handle missing JSON body
+    if not request.data or request.data.strip() == b"":  
         return {"message": "Request body must be JSON and cannot be empty."}, 400
 
     try:

@@ -8,6 +8,31 @@ from utils.error_handlers import format_validation_error, format_integrity_error
 
 participants_bp = Blueprint("participants", __name__, url_prefix="/participants")
 
+# Create - /participants - POST
+@participants_bp.route("/", methods=["POST"])
+def create_participant():
+    if not request.data or request.data.strip() == b"":
+        return {"message": "Request body must not be empty"}, 400
+
+    try:
+        body_data = participant_schema.load(request.get_json())
+        new_participant = Participant(
+            first_name=body_data.get("first_name"),
+            last_name=body_data.get("last_name"),
+            email=body_data.get("email"),
+            phone=body_data.get("phone")
+        )
+        db.session.add(new_participant)
+        db.session.commit()
+        return participant_schema.dump(new_participant), 201
+
+    except ValidationError as err:
+        return format_validation_error(err)
+
+    except IntegrityError as err:
+        return handle_unique_violation(err, body_data, ["email"])
+
+    
 # Read all - /participants - GET
 @participants_bp.route("/", methods=["GET"])
 def get_participants():
@@ -24,3 +49,4 @@ def get_participant(participant_id):
         return participant_schema.dump(participant)
     else:
         return {"message": f"Participant with id {participant_id} not found"}, 404
+    

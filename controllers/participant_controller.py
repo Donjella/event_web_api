@@ -74,3 +74,15 @@ def update_participant(participant_id):
             return handle_unique_violation(err, body_data, ["email"])
     else:
         return {"message": f"Participant with id {participant_id} not found"}, 404
+
+# Delete - /participants/<participant_id> - DELETE
+@participants_bp.route("/<int:participant_id>", methods=["DELETE"])
+def delete_participant(participant_id):
+    stmt = db.select(Participant).filter_by(participant_id=participant_id)
+    participant = db.session.scalar(stmt)
+    if participant:
+        db.session.delete(participant)
+        db.session.commit()
+        return {"message": f"Participant '{participant.first_name} {participant.last_name}' deleted successfully"}, 200
+    else:
+        return {"message": f"Participant with id {participant_id} not found"}, 404

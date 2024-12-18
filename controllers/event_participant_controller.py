@@ -48,3 +48,14 @@ def get_event_participant(event_participant_id):
     else:
         return {"message": f"Event Participant with id {event_participant_id} not found"}, 404
 
+# Delete - /event_participants/<event_participant_id> - DELETE
+@event_participants_bp.route("/<int:event_participant_id>", methods=["DELETE"])
+def delete_event_participant(event_participant_id):
+    stmt = db.select(EventParticipant).filter_by(event_participant_id=event_participant_id)
+    event_participant = db.session.scalar(stmt)
+    if event_participant:
+        db.session.delete(event_participant)
+        db.session.commit()
+        return {"message": f"Event Participant with id {event_participant_id} deleted successfully"}, 200
+    else:
+        return {"message": f"Event Participant with id {event_participant_id} not found"}, 404

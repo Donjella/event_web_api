@@ -14,3 +14,13 @@ def get_participants():
     stmt = db.select(Participant).order_by(Participant.first_name)
     participants_list = db.session.scalars(stmt)
     return participants_schema.dump(participants_list)
+
+# Read one - /participants/<participant_id> - GET
+@participants_bp.route("/<int:participant_id>", methods=["GET"])
+def get_participant(participant_id):
+    stmt = db.select(Participant).filter_by(participant_id=participant_id)
+    participant = db.session.scalar(stmt)
+    if participant:
+        return participant_schema.dump(participant)
+    else:
+        return {"message": f"Participant with id {participant_id} not found"}, 404

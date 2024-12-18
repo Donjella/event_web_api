@@ -1,6 +1,7 @@
 from init import db, ma
 from marshmallow import fields
 
+
 class Participant(db.Model):
     __tablename__ = "participants"
 
@@ -12,11 +13,15 @@ class Participant(db.Model):
 
     event_participants = db.relationship("EventParticipant", back_populates="participant", cascade="all, delete-orphan", passive_deletes=True)
 
+
 class ParticipantSchema(ma.Schema):
-    event_participants = fields.List(fields.Nested("EventParticipantSchema", exclude=["participant"]))
+    event_participants = fields.List(
+        fields.Nested("EventParticipantSchema", exclude=["participant"])
+    )
 
     class Meta:
         fields = ("participant_id", "first_name", "last_name", "email", "phone", "event_participants")
+
 
 participant_schema = ParticipantSchema()
 participants_schema = ParticipantSchema(many=True)

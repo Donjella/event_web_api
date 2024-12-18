@@ -9,12 +9,14 @@ class EventParticipant(db.Model):
     participant_id = db.Column(db.Integer, db.ForeignKey("participants.participant_id", ondelete="CASCADE"), nullable=False)
     role = db.Column(db.String(50), nullable=False)
 
+    __table_args__ = (db.UniqueConstraint("event_id", "participant_id", name="uq_event_participant"),)
+
     event = db.relationship("Event", back_populates="event_participants", passive_deletes=True)
     participant = db.relationship("Participant", back_populates="event_participants", passive_deletes=True)
 
 class EventParticipantSchema(ma.Schema):
-    event_id = fields.Integer(required=True)  
-    participant_id = fields.Integer(required=True)  
+    event_id = fields.Integer(required=True)
+    participant_id = fields.Integer(required=True)
     role = fields.String(
         required=True,
         validate=validate.OneOf(

@@ -1,6 +1,5 @@
 from init import db, ma
-from marshmallow import fields, validate
-
+from marshmallow import fields, validate, pre_load
 
 class EventParticipant(db.Model):
     __tablename__ = "event_participants"
@@ -17,6 +16,14 @@ class EventParticipant(db.Model):
 
 
 class EventParticipantSchema(ma.Schema):
+    event_id = fields.Integer(
+        required=True,
+        validate=validate.Range(min=1, error="Event ID must be a positive integer.")
+    )
+    participant_id = fields.Integer(
+        required=True,
+        validate=validate.Range(min=1, error="Participant ID must be a positive integer.")
+    )
     role = fields.String(
         required=True,
         validate=validate.OneOf(
@@ -33,8 +40,15 @@ class EventParticipantSchema(ma.Schema):
         exclude=["participant_id", "event_participants"]
     )
 
+    @pre_load
+    def normalise_role(self, data, **kwargs):
+        if "role" in data and isinstance(data["role"], str):
+            data["role"] = data["role"].strip().lower()
+        return data
+
     class Meta:
-        fields = ("event_participant_id", "role", "event", "participant")
+        fields = ("event_participant_id", "event_id", "participant_id", "role", "event", "participant")
+        ordered = True
 
 
 event_participant_schema = EventParticipantSchema()

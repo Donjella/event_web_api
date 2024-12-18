@@ -137,21 +137,25 @@ def seed_tables():
 
     event_participants = [
         EventParticipant(
-            event_id=1,  
-            participant_id=1,  
-            registration_date="2024-11-15"
+            event_id=1, 
+            participant_id=1, 
+            role="attendee"
         ),
         EventParticipant(
-            event_id=2,
-            participant_id=2,
-            registration_date="2024-12-01"
+            event_id=1, 
+            participant_id=2, 
+            role="speaker"
         ),
         EventParticipant(
-            event_id=1,
-            participant_id=3,
-            registration_date="2024-11-18"
-        )
-    ]
+            event_id=2, 
+            participant_id=3, 
+            role="sponsor"
+        ),
+        EventParticipant(
+            event_id=3, 
+            participant_id=4, 
+            role="attendee")
+]
     db.session.add_all(event_participants)
 
     db.session.commit()

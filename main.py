@@ -8,6 +8,7 @@ from controllers.venue_controller import venues_bp
 from controllers.organiser_controller import organisers_bp
 from controllers.event_controller import events_bp
 from controllers.participant_controller import participants_bp
+from controllers.event_participant_controller import event_participants_bp
 
 # Application factory - idea is to set up the application in a function.
 def create_app():
@@ -23,6 +24,7 @@ def create_app():
     app.register_blueprint(organisers_bp)
     app.register_blueprint(events_bp)
     app.register_blueprint(participants_bp)
+    app.register_blueprint(event_participants_bp)
 
     # Global Error Handlers
     @app.errorhandler(400)

@@ -4,7 +4,7 @@ from marshmallow.exceptions import ValidationError
 
 from init import db
 from models.organiser import Organiser, organisers_schema, organiser_schema
-from utils.error_handlers import format_validation_error, format_integrity_error
+from utils.error_handlers import format_validation_error, handle_unique_violation
 
 organisers_bp = Blueprint("organisers", __name__, url_prefix="/organisers")
 
@@ -48,7 +48,8 @@ def create_organiser():
         return format_validation_error(err)
 
     except IntegrityError as err:
-        return format_integrity_error(err)
+        # Handle unique constraints for email and other fields
+        return handle_unique_violation(err, body_data, ["email", "phone"])
 
 # Update - /organisers/<organiser_id> - PUT/PATCH
 @organisers_bp.route("/<int:organiser_id>", methods=["PUT", "PATCH"])
@@ -73,7 +74,8 @@ def update_organiser(organiser_id):
             return format_validation_error(err)
 
         except IntegrityError as err:
-            return format_integrity_error(err)
+            # Handle unique constraints for email and other fields
+            return handle_unique_violation(err, body_data, ["email", "phone"])
     else:
         return {"message": f"Organiser with id {organiser_id} not found"}, 404
 

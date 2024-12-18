@@ -2,7 +2,8 @@ from flask import Blueprint
 from init import db
 from models.organiser import Organiser
 from models.venue import Venue
-from models.event import Event  # Import Event model
+from models.event import Event  
+from models.participant import Participant  
 
 db_commands = Blueprint("db", __name__)
 
@@ -77,27 +78,61 @@ def seed_tables():
             description="A conference for tech enthusiasts.",
             date="2024-12-01",
             time="09:00:00",
-            organiser_id=1,  # Assuming Alice's organiser_id is 1
-            venue_id=1       # Assuming Hilton Sydney's venue_id is 1
+            organiser_id=1,  
+            venue_id=1       
         ),
         Event(
             name="AI Summit 2024",
             description="Exploring the latest in AI advancements.",
             date="2025-01-15",
             time="10:00:00",
-            organiser_id=2,  # Assuming Graham's organiser_id is 2
-            venue_id=2       # Assuming Melbourne Convention Centre's venue_id is 2
+            organiser_id=2,  
+            venue_id=2       
         ),
         Event(
             name="Developer Conference 2024",
             description="An event for software developers to network.",
             date="2024-11-20",
             time="14:00:00",
-            organiser_id=3,  # Assuming Charlie's organiser_id is 3
-            venue_id=3       # Assuming Brisbane Airport Conference Centre's venue_id is 3
+            organiser_id=3,  
+            venue_id=3       
         )
     ]
     db.session.add_all(events)
+
+    participants = [
+        Participant(
+            first_name="Steph",
+            last_name="Catley",
+            email="steph.catley@example.com",
+            phone="0401163457"
+        ),
+        Participant(
+            first_name="Mary",
+            last_name="Fowler",
+            email="mary_fowler@example.com",
+            phone="0401131238"
+        ),
+        Participant(
+            first_name="Robbie",
+            last_name="Fowler",
+            email="robbiefowler@outlook.com",
+            phone="0434567890"
+        ),
+        Participant(
+            first_name="Dani",
+            last_name="Olmo",
+            email="dani_olmo@gmail.com",
+            phone="0445678901"
+        ),
+        Participant(
+            first_name="Lamine",
+            last_name="Yamal",
+            email="lamine.yamal@gmail.com",
+            phone="0456789012"
+        )
+    ]
+    db.session.add_all(participants)
 
     db.session.commit()
     print("All tables seeded")

@@ -12,8 +12,13 @@ def format_integrity_error(err):
     return {"message": "A database error occurred"}, 500
 
 def handle_unique_violation(err, body_data, fields):
-    for field in fields:
-        if field in err.orig.diag.constraint_name:
-            value = body_data.get(field, "unknown")
-            return {"message": f"The value for '{field}' must be unique.'{value}' is already in use."}, 400
+    if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+        if "uq_event_participant" in err.orig.diag.constraint_name:
+            return {
+                "message": f"The participant with ID {body_data.get('participant_id')} is already registered for event ID {body_data.get('event_id')}"
+            }, 400
+        for field in fields:
+            if field in err.orig.diag.constraint_name:
+                value = body_data.get(field, "unknown")
+                return {"message": f"The value for '{field}' ('{value}') must be unique"}, 400
     return {"message": "A unique constraint was violated, but the field could not be determined"}, 400

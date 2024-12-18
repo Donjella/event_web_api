@@ -31,7 +31,6 @@ def create_participant():
 
     except IntegrityError as err:
         return handle_unique_violation(err, body_data, ["email"])
-
     
 # Read all - /participants - GET
 @participants_bp.route("/", methods=["GET"])
@@ -50,3 +49,28 @@ def get_participant(participant_id):
     else:
         return {"message": f"Participant with id {participant_id} not found"}, 404
     
+# Update - /participants/<participant_id> - PUT/PATCH
+@participants_bp.route("/<int:participant_id>", methods=["PUT", "PATCH"])
+def update_participant(participant_id):
+    if not request.data or request.data.strip() == b"":
+        return {"message": "Request body must not be empty"}, 400
+
+    stmt = db.select(Participant).filter_by(participant_id=participant_id)
+    participant = db.session.scalar(stmt)
+    if participant:
+        try:
+            body_data = participant_schema.load(request.get_json(), partial=True)
+            participant.first_name = body_data.get("first_name", participant.first_name)
+            participant.last_name = body_data.get("last_name", participant.last_name)
+            participant.email = body_data.get("email", participant.email)
+            participant.phone = body_data.get("phone", participant.phone)
+            db.session.commit()
+            return participant_schema.dump(participant), 200
+
+        except ValidationError as err:
+            return format_validation_error(err)
+
+        except IntegrityError as err:
+            return handle_unique_violation(err, body_data, ["email"])
+    else:
+        return {"message": f"Participant with id {participant_id} not found"}, 404

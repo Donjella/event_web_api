@@ -47,6 +47,45 @@ def get_event_participant(event_participant_id):
         return event_participant_schema.dump(event_participant)
     else:
         return {"message": f"Event Participant with id {event_participant_id} not found"}, 404
+    
+# Update - /event_participants/<event_participant_id> - PUT/PATCH
+@event_participants_bp.route("/<int:event_participant_id>", methods=["PUT", "PATCH"])
+def update_event_participant(event_participant_id):
+    if not request.data or request.data.strip() == b"":  
+        return {"message": "Request body must be JSON and cannot be empty."}, 400
+
+    stmt = db.select(EventParticipant).filter_by(event_participant_id=event_participant_id)
+    event_participant = db.session.scalar(stmt)
+
+    if event_participant:
+        try:
+            body_data = event_participant_schema.load(request.get_json(), partial=True)
+
+            existing_record = db.session.scalar(
+                db.select(EventParticipant).filter_by(
+                    event_id=body_data.get("event_id", event_participant.event_id),
+                    participant_id=body_data.get("participant_id", event_participant.participant_id)
+                )
+            )
+            if existing_record and existing_record.event_participant_id != event_participant_id:
+                return {
+                    "message": f"The participant with ID {body_data.get('participant_id')} is already registered for event ID {body_data.get('event_id')}."
+                }, 400
+
+            event_participant.event_id = body_data.get("event_id") or event_participant.event_id
+            event_participant.participant_id = body_data.get("participant_id") or event_participant.participant_id
+            event_participant.role = body_data.get("role") or event_participant.role
+
+            db.session.commit()
+            return event_participant_schema.dump(event_participant), 200
+
+        except ValidationError as err:
+            return format_validation_error(err)
+
+        except IntegrityError as err:
+            return handle_unique_violation(err, body_data, ["event_id", "participant_id"])
+    else:
+        return {"message": f"Event Participant with id {event_participant_id} not found"}, 404
 
 # Delete - /event_participants/<event_participant_id> - DELETE
 @event_participants_bp.route("/<int:event_participant_id>", methods=["DELETE"])

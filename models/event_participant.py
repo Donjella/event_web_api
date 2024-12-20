@@ -33,7 +33,7 @@ class EventParticipantSchema(ma.Schema):
     )
     event = fields.Nested(
         "EventSchema",
-        exclude=["event_id", "organiser_id", "venue_id", "time", "venue", "event_participants"]
+        exclude=["organiser", "venue", "event_participants"]
     )
     participant = fields.Nested(
         "ParticipantSchema",

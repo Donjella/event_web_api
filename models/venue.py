@@ -42,7 +42,7 @@ class VenueSchema(ma.Schema):
         validate=validate.Range(min=1, error="Capacity must be a positive number.")
     )  # Positive integer only
 
-    events = fields.List(fields.Nested("EventSchema", exclude=["venue"]))  
+    events = fields.List(fields.Nested("EventSchema", exclude=["venue", "event_participants"]))  
 
     class Meta:
         fields = (

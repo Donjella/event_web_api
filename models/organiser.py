@@ -36,7 +36,8 @@ class OrganiserSchema(ma.Schema):
         required=True, 
         validate=validate.Regexp(AU_PHONE_REGEX, error="Phone must be a valid Australian number (e.g., +614XXXXXXXX or 04XXXXXXXX).")
     )
-    events = fields.List(fields.Nested("EventSchema", exclude=["organiser"]))
+
+    events = fields.List(fields.Nested("EventSchema", exclude=["organiser_id", "event_participants"]))
 
     class Meta:
         fields = ("organiser_id", "first_name", "last_name", "company_name", "email", "phone", "events")

@@ -55,6 +55,7 @@ class VenueSchema(ma.Schema):
             "capacity", 
             "events"
         )
+        ordered = True
 
 venue_schema = VenueSchema()
 venues_schema = VenueSchema(many=True)

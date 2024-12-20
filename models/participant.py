@@ -21,6 +21,7 @@ class ParticipantSchema(ma.Schema):
 
     class Meta:
         fields = ("participant_id", "first_name", "last_name", "email", "phone", "event_participants")
+        ordered = True
 
 
 participant_schema = ParticipantSchema()

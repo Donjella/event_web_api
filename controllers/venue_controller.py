@@ -90,3 +90,4 @@ def delete_venue(venue_id):
         return {"message": f"Venue '{venue.name}' deleted successfully"}, 200
     else:
         return {"message": f"Venue with id {venue_id} not found"}, 404
+

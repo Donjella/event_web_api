@@ -40,6 +40,7 @@ class OrganiserSchema(ma.Schema):
 
     class Meta:
         fields = ("organiser_id", "first_name", "last_name", "company_name", "email", "phone", "events")
+        ordered = True
 
 organiser_schema = OrganiserSchema()
 organisers_schema = OrganiserSchema(many=True)

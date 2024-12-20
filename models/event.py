@@ -42,6 +42,7 @@ class EventSchema(ma.Schema):
 
     class Meta:
         fields = ( "event_id", "organiser_id", "venue_id", "name", "description", "date", "time", "organiser", "venue", "event_participants")
+        ordered = True
 
 event_schema = EventSchema()
 events_schema = EventSchema(many=True)

@@ -34,7 +34,7 @@ The Event Management Web API is a Flask-based RESTful API designed to manage eve
 
 ## Application Setup
 
-***Note***: The application is developed and tested on Python 3.12.5 and is confirmed to work on Unix-like systems (specifically macOS). Compatibility on other operating systems is not guaranteed. Below are the instructions for setting up the environment on macOS; please adjust as needed for your system.
+***Note***: The application is developed and tested on Python 3.13.0 and is confirmed to work on Unix-like systems (specifically macOS). Compatibility on other operating systems is not guaranteed. Below are the instructions for setting up the environment on macOS; please adjust as needed for your system.
 
 ### Clone the repository
 Users can clone or fork the code of the application from its [GitHub repository](https://github.com/Donjella/assignment-2-CSA).
@@ -75,13 +75,75 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Configure environment variables in a .flaskenv file
+### Configure .env general-purpose file to store environment variables
+
+The .env file is commonly used in Python projects to store environment variables securely and conveniently. This file is paired with the python-dotenv package, which loads these variables into the project’s runtime environment.
+
+To install the python-dotenv package, run the following command:
+```
+pip3 install python-dotenv
+```
+An environment variable defines where the database is located and how the application should authenticate to it. To configure an environment variable for this project, specify the connection string for the PostgreSQL database as follows:
+```
+DATABASE_URI="postgresql+psycopg2://database_user:new_password@localhost:5432/database_name"
+```
+* Replace `DATABASE_URI` with the appropriate connection string for your project.  
+
+*Other replaceable placeholders:*
+* `database_user`: The username for the database.
+* `new_password`: The password for the user.
+* `localhost`: The host where the database is running (use the actual host URL for production environments).
+* `5432`: The default port for PostgreSQL (modify if your database uses a different port).
+* `database_name`: The name of the database you want to connect to.  
+
+***Notes:*** 
+* **Do Not Commit .env to Version Control:** Add .env to your .gitignore file to prevent sensitive information like database credentials from being committed to repositories.  
+
+* ***Dynamic configuration for production:*** The connection string for the database on Neon.tech will be available from the Neon.tech database dashboard. Copy the connection string provided and replace it in the .env file for production use.
+
+* ***Gunicorn***: Flask's built-in development server is not designed to handle production traffic. For production deployments, we will use Gunicorn (Green Unicorn), a Python WSGI HTTP server commonly used to serve Python web applications in production environments.It is designed to handle multiple concurrent requests efficiently, ensuring high performance and reliability under heavy loads.
+
+To install Gunicorn:
+```
+pip3 install gunicorn
+```
+
+Once installed, you can run your Flask application using Gunicorn. Assuming your Flask app factory is defined as `create_app()` in a file named `main.py:`
+```
+gunicorn 'main:create_app()' 
+```
+
+### Configure flask-specific variables in a .flaskenv file
 
 ```
 FLASK_APP=main
 FLASK_DEBUG=1
 FLASK_RUN_PORT=8080
 ```
+
+1. `FLASK_APP=main`: Specifies the entry point for the Flask app (main.py).
+2. `FLASK_DEBUG=1`: Enables debug mode for development, providing automatic server restarts and an interactive debugger (use only in development). Change `1` to `0` for production environments as debug mode can expose sensitive information like stack traces or environment variables.
+3. `FLASK_RUN_PORT=8080`: Runs the application on port 8080 instead of the default 5000, avoiding potential conflicts.
+
+
+### Creating the Database
+
+Open a new terminal and input the following commands:
+
+```sql
+psql
+
+-- Create the database
+CREATE DATABASE database_name;
+
+-- Create a new user with a password
+CREATE USER database_user WITH PASSWORD 'new_password';
+
+-- Grant all privileges on the database to the user
+GRANT ALL PRIVILEGES ON DATABASE database_name TO database_user;
+
+-- Connect to the newly created database
+\c database_name;
 
 ### Initialize the database
 

@@ -7,7 +7,7 @@ class Organiser(db.Model):
     organiser_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
-    company_name = db.Column(db.String(100))
+    company_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(20), nullable=False)
 
@@ -26,6 +26,7 @@ class OrganiserSchema(ma.Schema):
         validate=validate.Length(min=1, max=50, error="Last name must be between 1 and 50 characters long.")
     )
     company_name = fields.String(
+        required=True,
         validate=validate.Length(max=100, error="Company name cannot exceed 100 characters.")
     )
     email = fields.Email(
